@@ -7,4 +7,5 @@ public class InventoryAllocator {
         List<Allocation>list=new ArrayList<>();
 
     }
+
 }
