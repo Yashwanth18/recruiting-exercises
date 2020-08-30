@@ -10,4 +10,11 @@ public class Warehouses {
         this.inventory=inventory;
     }
 
+    public Map<String, Integer> getInventory() {
+        return inventory;
+    }
+
+    public String getWarehouseName() {
+        return warehouseName;
+    }
 }
