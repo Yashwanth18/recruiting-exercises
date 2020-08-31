@@ -3,7 +3,7 @@ import java.util.*;
 public class InventoryAllocator {
 
 
-    public List<Map> inventoryAllocator(Map<String, Integer> order, List<WareHouse> listOfWareHouses)
+    public List<Map<String,Map<String,Integer>>> inventoryAllocator(Map<String, Integer> order, List<WareHouse> listOfWareHouses)
     {
 
         if(listOfWareHouses.size()==0 || order.size()==0)
@@ -11,53 +11,41 @@ public class InventoryAllocator {
             return new ArrayList<>();
         }
 
-        List<Map> listOfAllocations = new ArrayList<>();
-        Map<String, Map<String, Integer>> currentMap = new LinkedHashMap<>();
+        List<Map<String,Map<String,Integer>>> listOfAllocations = new ArrayList<>();
+        Map<String, Map<String, Integer>> shipmentMap = new LinkedHashMap<>();
 
         for (String itemName : order.keySet())
         {
-            int currentCount = order.get(itemName);
-            if(currentCount<=0)
+            int quantity = order.get(itemName);
+            if(quantity<=0)
             {
                 return listOfAllocations;
             }
-            for (WareHouse currentWareHouse : listOfWareHouses)
+            for (WareHouse wareHouse : listOfWareHouses)
             {
-                if (currentWareHouse.getInventory().size() == 0)
-                {
-                    continue;
-                }
-                String currentWareHouseName = currentWareHouse.getWarehouseName();
-                int currentWareHouseItemQuantity = currentWareHouse.getItemQuantity(itemName);
+                Map<String, Integer> updateMap = shipmentMap.getOrDefault(wareHouse.getWarehouseName(), new LinkedHashMap<>());
+                updateMap.put(itemName, wareHouse.getItemQuantity(itemName));
 
-
-                if (currentWareHouseItemQuantity <= 0)
-                {
-                    continue;
-                }
-
-                if (currentCount <= 0)
+                if (quantity <= 0)
                 {
                     break;
                 }
-                else if (currentCount > currentWareHouseItemQuantity)
+
+                else if (quantity > wareHouse.getItemQuantity(itemName))
                 {
-                    currentCount = currentCount - currentWareHouseItemQuantity;
-                    Map<String, Integer> temp = currentMap.getOrDefault(currentWareHouseName, new LinkedHashMap<>());
-                    temp.put(itemName, currentWareHouseItemQuantity);
-                    currentMap.put(currentWareHouseName, temp);
+                    quantity = quantity - wareHouse.getItemQuantity(itemName);
+                    shipmentMap.put(wareHouse.getWarehouseName(), updateMap);
 
                 }
+
                 else {
-                    currentCount = 0;
-                    Map<String, Integer> temp = currentMap.getOrDefault(currentWareHouseName, new LinkedHashMap<>());
-                    temp.put(itemName, currentWareHouseItemQuantity);
-                    currentMap.put(currentWareHouseName, temp);
+                    quantity = 0;
+                    shipmentMap.put(wareHouse.getWarehouseName(), updateMap);
                     break;
                 }
             }
 
-            if (currentCount != 0)
+            if (quantity != 0)
             {
                 return new ArrayList<>();
             }
@@ -65,10 +53,10 @@ public class InventoryAllocator {
         }
 
 
-        for(String itemName : currentMap.keySet())
+        for(String itemName : shipmentMap.keySet())
         {
             Map<String, Map<String, Integer>> listOfAllocationsMap = new LinkedHashMap<>();
-            listOfAllocationsMap.put(itemName, currentMap.get(itemName));
+            listOfAllocationsMap.put(itemName, shipmentMap.get(itemName));
             listOfAllocations.add(listOfAllocationsMap);
         }
 

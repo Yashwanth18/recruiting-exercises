@@ -35,7 +35,7 @@ public class InventoryAllocatorTest {
         innerMap.put("apple", 1);
         outputMap.put("owd", innerMap);
         testOutputList.add(outputMap);
-        List<Map>list=object.inventoryAllocator(order,warehouseList);
+        List<Map<String,Map<String,Integer>>>list=object.inventoryAllocator(order,warehouseList);
 
         assertEquals("[{owd={apple=1, banana=2}}]",list.toString());
 
