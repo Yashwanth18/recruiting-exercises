@@ -16,7 +16,7 @@ public class WareHouse {
 
     public String getWarehouseName()
     {
-        return warehouseName;
+        return this.warehouseName;
     }
 
 
@@ -28,7 +28,7 @@ public class WareHouse {
 
     public Map<String, Integer> getInventory()
     {
-        return inventory;
+        return this.inventory;
     }
 
 
